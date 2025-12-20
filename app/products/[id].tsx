@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import {
   View,
   Text,
@@ -6,11 +6,11 @@ import {
   Image,
   TouchableOpacity,
   ScrollView,
-} from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
-import Slider from '@react-native-community/slider';
-import { useRouter } from 'expo-router';
-import TabsLayout from '../(tabs)/_layout';
+} from "react-native";
+import { Ionicons } from "@expo/vector-icons";
+import Slider from "@react-native-community/slider";
+import { useRouter } from "expo-router";
+import TabsLayout from "../(tabs)/_layout";
 
 export default function ProductPage() {
   const router = useRouter();
@@ -30,7 +30,7 @@ export default function ProductPage() {
       <ScrollView showsVerticalScrollIndicator={false}>
         {/* Image */}
         <Image
-          source={require('../../assets/images/image6.png')}
+          source={require("../../assets/images/image6.png")}
           style={styles.image}
         />
 
@@ -99,7 +99,10 @@ export default function ProductPage() {
         <View style={styles.priceBox}>
           <Text style={styles.price}>$8.24</Text>
         </View>
-        <TouchableOpacity style={styles.orderBtn}>
+        <TouchableOpacity
+          style={styles.orderBtn}
+          onPress={() => router.push("/payment/page")}
+        >
           <Text style={styles.orderText}>ORDER NOW</Text>
         </TouchableOpacity>
       </View>
@@ -110,25 +113,24 @@ export default function ProductPage() {
   );
 }
 
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
   },
   header: {
-    position: 'absolute',
+    position: "absolute",
     top: 50,
     left: 16,
     right: 16,
     zIndex: 10,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    justifyContent: "space-between",
   },
   image: {
-    width: '100%',
+    width: "100%",
     height: 320,
-    resizeMode: 'contain',
+    resizeMode: "contain",
     marginTop: 80,
   },
   content: {
@@ -136,25 +138,25 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 22,
-    fontWeight: '700',
-    color: '#2C2C2C',
+    fontWeight: "700",
+    color: "#2C2C2C",
   },
   ratingRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     marginVertical: 8,
     gap: 6,
   },
   rating: {
-    fontWeight: '600',
+    fontWeight: "600",
   },
   time: {
-    color: '#888',
+    color: "#888",
   },
   description: {
     fontSize: 14,
     lineHeight: 22,
-    color: '#666',
+    color: "#666",
     marginVertical: 12,
   },
   section: {
@@ -162,78 +164,78 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: "600",
     marginBottom: 10,
   },
   sliderRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: 10,
   },
   mild: {
-    color: 'green',
+    color: "green",
     fontSize: 12,
   },
   hot: {
-    color: 'red',
+    color: "red",
     fontSize: 12,
   },
   portionRow: {
     marginTop: 30,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
   },
   counter: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: 14,
   },
   counterBtn: {
-    backgroundColor: '#EF2A39',
+    backgroundColor: "#EF2A39",
     width: 36,
     height: 36,
     borderRadius: 10,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   counterText: {
-    color: '#fff',
+    color: "#fff",
     fontSize: 20,
-    fontWeight: '700',
+    fontWeight: "700",
   },
   qty: {
     fontSize: 18,
-    fontWeight: '600',
+    fontWeight: "600",
   },
   footer: {
-    flexDirection: 'row',
+    flexDirection: "row",
     padding: 16,
-    alignItems: 'center',
+    alignItems: "center",
     gap: 14,
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
   },
   priceBox: {
-    backgroundColor: '#EF2A39',
+    backgroundColor: "#EF2A39",
     paddingVertical: 14,
     paddingHorizontal: 22,
     borderRadius: 14,
   },
   price: {
-    color: '#fff',
+    color: "#fff",
     fontSize: 18,
-    fontWeight: '700',
+    fontWeight: "700",
   },
   orderBtn: {
     flex: 1,
-    backgroundColor: '#2C2C2C',
+    backgroundColor: "#2C2C2C",
     paddingVertical: 16,
     borderRadius: 14,
-    alignItems: 'center',
+    alignItems: "center",
   },
   orderText: {
-    color: '#fff',
+    color: "#fff",
     fontSize: 16,
-    fontWeight: '700',
+    fontWeight: "700",
   },
 });
