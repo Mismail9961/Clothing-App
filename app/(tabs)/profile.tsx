@@ -8,8 +8,11 @@ import {
   ScrollView,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import { useRouter } from "expo-router";
 
 export default function ProfileScreen() {
+  const router = useRouter();
+
   return (
     <View style={styles.container}>
       {/* Header */}
@@ -17,8 +20,6 @@ export default function ProfileScreen() {
         <TouchableOpacity>
           <Ionicons name="arrow-back" size={24} color="#fff" />
         </TouchableOpacity>
-
-
       </View>
 
       {/* Profile Image */}
@@ -54,7 +55,7 @@ export default function ProfileScreen() {
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.logoutBtn}>
-            <Text style={styles.logoutText}>Log out</Text>
+            <Text style={styles.logoutText} onPress={() => router.push("/signup/page")}>Log out</Text>
             <Ionicons name="log-out-outline" size={18} color="#EF2A39" />
           </TouchableOpacity>
         </View>
