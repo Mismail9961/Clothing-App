@@ -5,318 +5,312 @@ import {
   StyleSheet,
   TouchableOpacity,
   SafeAreaView,
-  TextInput,
   ScrollView,
+  Image,
+  Dimensions,
+  Platform,
 } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
-import { useRouter } from 'expo-router';
+import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
+import { useRouter } from "expo-router";
+
+const { width } = Dimensions.get("window");
 
 /* ---------- Types ---------- */
 
-interface RowProps {
-  label: string;
-  value: string;
-  bold?: boolean;
-}
-
-interface PaymentCardProps {
-  title: string;
-  subtitle?: string;
-  icon: string;
-  selected: boolean;
-  onPress: () => void;
+interface CartItem {
+  id: number;
+  name: string;
+  type: string;
+  price: number;
+  image: string;
+  quantity: number;
 }
 
 /* ---------- Screen ---------- */
 
 export default function CheckoutScreen() {
-  const router = useRouter();  
-  const [selectedPayment, setSelectedPayment] = useState<
-    "credit" | "debit" | "cod"
-  >("credit");
+  const router = useRouter();
+  
+  // State for items (matching image_e64f64.png)
+  const [items, setItems] = useState<CartItem[]>([
+    {
+      id: 1,
+      name: "Modern light clothes",
+      type: "Dress modern",
+      price: 212.99,
+      image: "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=400",
+      quantity: 4,
+    },
+    {
+      id: 2,
+      name: "Modern light clothes",
+      type: "Dress modern",
+      price: 162.99,
+      image: "https://images.unsplash.com/photo-1539109132314-3477524c859c?w=400",
+      quantity: 1,
+    },
+  ]);
 
-  const [address, setAddress] = useState("");
-  const [phone, setPhone] = useState("");
+  const updateQty = (id: number, delta: number) => {
+    setItems(prev => prev.map(item => 
+      item.id === id ? { ...item, quantity: Math.max(1, item.quantity + delta) } : item
+    ));
+  };
+
+  const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
+  const totalAmount = items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
 
   return (
-    <SafeAreaView style={styles.container}>
-      <ScrollView showsVerticalScrollIndicator={false}>
+    <SafeAreaView style={styles.safeArea}>
+      <View style={styles.container}>
+        
         {/* Header */}
         <View style={styles.header}>
-          <Ionicons name="arrow-back" size={24} onPress={() => router.push("/products/[id]")} />
-          <Text style={styles.headerTitle}>Order summary</Text>
-          <Ionicons name="search" size={22} />
+          <TouchableOpacity style={styles.headerCircle} onPress={() => router.back()}>
+            <Ionicons name="chevron-back" size={22} color="#111" />
+          </TouchableOpacity>
+          <Text style={styles.headerTitle}>Checkout</Text>
+          <TouchableOpacity style={styles.headerCircle}>
+            <MaterialCommunityIcons name="equalizer-outline" size={22} color="#111" style={{ transform: [{ rotate: '90deg' }] }} />
+          </TouchableOpacity>
         </View>
 
-        {/* Order Summary */}
-        <View style={styles.card}>
-          <Row label="Order" value="$16.48" />
-          <Row label="Taxes" value="$0.3" />
-          <Row label="Delivery fees" value="$1.5" />
+        <ScrollView 
+            showsVerticalScrollIndicator={false} 
+            contentContainerStyle={styles.scrollContent}
+        >
+          {/* Cart Items List */}
+          {items.map((item) => (
+            <View key={item.id} style={styles.cartCard}>
+              <Image source={{ uri: item.image }} style={styles.itemImage} />
+              <View style={styles.itemInfo}>
+                <View style={styles.itemHeaderRow}>
+                  <Text style={styles.itemName}>{item.name}</Text>
+                  <TouchableOpacity>
+                    <Ionicons name="ellipsis-horizontal" size={18} color="#999" />
+                  </TouchableOpacity>
+                </View>
+                <Text style={styles.itemType}>{item.type}</Text>
+                
+                <View style={styles.itemFooterRow}>
+                  <Text style={styles.itemPrice}>${item.price.toFixed(2)}</Text>
+                  <View style={styles.qtyContainer}>
+                    <TouchableOpacity onPress={() => updateQty(item.id, -1)} style={styles.qtyBtn}>
+                      <Ionicons name="remove" size={16} color="#111" />
+                    </TouchableOpacity>
+                    <Text style={styles.qtyText}>{item.quantity}</Text>
+                    <TouchableOpacity onPress={() => updateQty(item.id, 1)} style={styles.qtyBtn}>
+                      <Ionicons name="add" size={16} color="#111" />
+                    </TouchableOpacity>
+                  </View>
+                </View>
+              </View>
+            </View>
+          ))}
 
-          <View style={styles.divider} />
+          {/* Shipping Information Section */}
+          <Text style={styles.sectionTitle}>Shipping Information</Text>
+          <TouchableOpacity style={styles.shippingCard}>
+            <View style={styles.visaContainer}>
+                <Image 
+                    source={{ uri: 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Visa_Inc._logo.svg/2560px-Visa_Inc._logo.svg.png' }} 
+                    style={styles.visaLogo}
+                />
+            </View>
+            <Text style={styles.cardNumber}>**** **** **** 2143</Text>
+            <Ionicons name="chevron-down" size={20} color="#666" />
+          </TouchableOpacity>
 
-          <Row label="Total:" value="$18.19" bold />
+          {/* Summary Table */}
+          <View style={styles.summaryContainer}>
+            <View style={styles.summaryRow}>
+              <Text style={styles.summaryLabel}>Total ({totalItems} items)</Text>
+              <Text style={styles.summaryValue}>${totalAmount.toFixed(2)}</Text>
+            </View>
+            <View style={styles.summaryRow}>
+              <Text style={styles.summaryLabel}>Shipping Fee</Text>
+              <Text style={styles.summaryValue}>$0.00</Text>
+            </View>
+            <View style={styles.summaryRow}>
+              <Text style={styles.summaryLabel}>Discount</Text>
+              <Text style={styles.summaryValue}>$0.00</Text>
+            </View>
+            
+            <View style={styles.divider} />
 
-          <Text style={styles.deliveryText}>
-            Estimated delivery time:{" "}
-            <Text style={styles.bold}>15 - 30 mins</Text>
-          </Text>
-        </View>
-
-        {/* Payment Methods */}
-        <Text style={styles.sectionTitle}>Payment methods</Text>
-
-        <PaymentCard
-          title="Credit card"
-          subtitle="3586 **** **** 6055"
-          icon="logo-mastercard"
-          selected={selectedPayment === "credit"}
-          onPress={() => setSelectedPayment("credit")}
-        />
-
-        <PaymentCard
-          title="Debit card"
-          subtitle="3586 **** **** 6055"
-          icon="logo-visa"
-          selected={selectedPayment === "debit"}
-          onPress={() => setSelectedPayment("debit")}
-        />
-
-        <PaymentCard
-          title="Cash on Delivery"
-          subtitle="Pay when food arrives"
-          icon="cash-outline"
-          selected={selectedPayment === "cod"}
-          onPress={() => setSelectedPayment("cod")}
-        />
-
-        {/* COD FORM */}
-        {selectedPayment === "cod" && (
-          <View style={styles.codBox}>
-            <Text style={styles.codTitle}>Delivery Details</Text>
-
-            <TextInput
-              placeholder="Delivery Address"
-              style={styles.input}
-              value={address}
-              onChangeText={setAddress}
-            />
-
-            <TextInput
-              placeholder="Phone Number"
-              style={styles.input}
-              keyboardType="phone-pad"
-              value={phone}
-              onChangeText={setPhone}
-            />
+            <View style={styles.summaryRow}>
+              <Text style={styles.subTotalLabel}>Sub Total</Text>
+              <Text style={styles.subTotalValue}>${totalAmount.toFixed(2)}</Text>
+            </View>
           </View>
-        )}
 
-        {/* Save Card */}
-        {selectedPayment !== "cod" && (
-          <View style={styles.saveCard}>
-            <Ionicons name="checkbox" size={18} color="red" />
-            <Text style={styles.saveText}>
-              Save card details for future payments
-            </Text>
-          </View>
-        )}
-      </ScrollView>
+          {/* FINAL PLACE ORDER BUTTON */}
+          <TouchableOpacity 
+            style={styles.placeOrderButton}
+            onPress={() => router.push("/success/page" as any)}
+            activeOpacity={0.8}
+          >
+            <Text style={styles.placeOrderText}>Place Order</Text>
+            <View style={styles.arrowCircle}>
+               <Ionicons name="arrow-forward" size={18} color="#111" />
+            </View>
+          </TouchableOpacity>
 
-      {/* Footer */}
-      <View style={styles.footer}>
-        <View>
-          <Text style={styles.footerLabel}>Total price</Text>
-          <Text style={styles.footerPrice}>$18.19</Text>
-        </View>
-
-        <TouchableOpacity style={styles.payButton}>
-          <Text style={styles.payText} onPress={() => router.push("/success/page")}>
-            {selectedPayment === "cod" ? "Place Order" : "Pay Now"}
-          </Text>
-        </TouchableOpacity>
+        </ScrollView>
       </View>
     </SafeAreaView>
   );
 }
 
-/* ---------- Components ---------- */
-
-const Row: React.FC<RowProps> = ({ label, value, bold = false }) => (
-  <View style={styles.row}>
-    <Text style={[styles.rowText, bold && styles.bold]}>{label}</Text>
-    <Text style={[styles.rowText, bold && styles.bold]}>{value}</Text>
-  </View>
-);
-
-const PaymentCard: React.FC<PaymentCardProps> = ({
-  title,
-  subtitle,
-  icon,
-  selected,
-  onPress,
-}) => (
-  <TouchableOpacity style={styles.paymentCard} onPress={onPress}>
-    <Ionicons name={icon as any} size={32} />
-    <View style={{ flex: 1, marginLeft: 12 }}>
-      <Text style={styles.paymentTitle}>{title}</Text>
-      {subtitle && (
-        <Text style={styles.paymentSubtitle}>{subtitle}</Text>
-      )}
-    </View>
-    <Ionicons
-      name={selected ? "radio-button-on" : "radio-button-off"}
-      size={22}
-    />
-  </TouchableOpacity>
-);
-
-/* ---------- Styles ---------- */
-
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-    paddingTop: 60,
-  },
-
+  safeArea: { flex: 1, backgroundColor: "#fff" },
+  container: { flex: 1 },
   header: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    paddingHorizontal: 16,
-    marginBottom: 16,
+    paddingHorizontal: 20,
+    paddingTop: Platform.OS === 'ios' ? 10 : 40,
+    paddingBottom: 20,
   },
-
-  headerTitle: {
-    fontSize: 18,
-    fontWeight: "600",
-  },
-
-  card: {
-    marginHorizontal: 16,
-    backgroundColor: "#fff",
-    padding: 14,
-    borderRadius: 12,
-    elevation: 2,
-  },
-
-  row: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginVertical: 4,
-  },
-
-  rowText: {
-    fontSize: 14,
-    color: "#333",
-  },
-
-  bold: {
-    fontWeight: "700",
-  },
-
-  divider: {
-    height: 1,
-    backgroundColor: "#eee",
-    marginVertical: 8,
-  },
-
-  deliveryText: {
-    marginTop: 8,
-    fontSize: 13,
-    color: "#444",
-  },
-
-  sectionTitle: {
-    fontSize: 16,
-    fontWeight: "600",
-    margin: 16,
-  },
-
-  paymentCard: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginHorizontal: 16,
-    padding: 14,
-    borderRadius: 12,
-    backgroundColor: "#fff",
-    elevation: 2,
-    marginBottom: 12,
-  },
-
-  paymentTitle: {
-    fontSize: 15,
-    fontWeight: "600",
-  },
-
-  paymentSubtitle: {
-    fontSize: 13,
-    color: "#666",
-  },
-
-  codBox: {
-    marginHorizontal: 16,
-    marginTop: 10,
-    padding: 14,
-    borderRadius: 12,
-    backgroundColor: "#f9f9f9",
-  },
-
-  codTitle: {
-    fontSize: 15,
-    fontWeight: "600",
-    marginBottom: 10,
-  },
-
-  input: {
+  headerCircle: {
+    width: 45,
+    height: 45,
+    borderRadius: 23,
     borderWidth: 1,
-    borderColor: "#ddd",
-    borderRadius: 10,
-    padding: 12,
-    marginBottom: 10,
+    borderColor: '#F0F0F0',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  headerTitle: { fontSize: 18, fontWeight: "700", color: "#111" },
+  scrollContent: { paddingHorizontal: 20, paddingBottom: 120 },
+  
+  // Item Card
+  cartCard: {
+    flexDirection: 'row',
+    marginBottom: 25,
+    alignItems: 'center',
+  },
+  itemImage: {
+    width: 85,
+    height: 85,
+    borderRadius: 15,
+    backgroundColor: '#F5F5F5',
+  },
+  itemInfo: { flex: 1, marginLeft: 15 },
+  itemHeaderRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
+  itemName: { fontSize: 16, fontWeight: '700', color: '#111' },
+  itemType: { fontSize: 13, color: '#999', marginTop: 4 },
+  itemFooterRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: 10 },
+  itemPrice: { fontSize: 16, fontWeight: '800', color: '#111' },
+  
+  // Qty Control
+  qtyContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#F8F8F8',
+    borderRadius: 20,
+    padding: 2,
+    borderWidth: 1,
+    borderColor: '#EEE',
+  },
+  qtyBtn: {
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    backgroundColor: '#FFF',
+    justifyContent: 'center',
+    alignItems: 'center',
+    elevation: 1,
+  },
+  qtyText: { marginHorizontal: 10, fontSize: 14, fontWeight: '700' },
+
+  // Shipping
+  sectionTitle: { fontSize: 18, fontWeight: '700', color: '#111', marginTop: 10, marginBottom: 15 },
+  shippingCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#F8F8F8',
+    borderRadius: 15,
+    padding: 15,
+    marginBottom: 30,
+  },
+  visaContainer: {
+    backgroundColor: '#2D4E9E',
+    paddingHorizontal: 8,
+    paddingVertical: 5,
+    borderRadius: 5,
+  },
+  visaLogo: { width: 35, height: 12, tintColor: '#FFF', resizeMode: 'contain' },
+  cardNumber: { flex: 1, marginLeft: 15, fontSize: 15, color: '#111', fontWeight: '500' },
+
+  // Summary
+  summaryContainer: { marginTop: 10, marginBottom: 30 },
+  summaryRow: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 12 },
+  summaryLabel: { fontSize: 15, color: '#999' },
+  summaryValue: { fontSize: 15, fontWeight: '700', color: '#111' },
+  divider: { height: 1, backgroundColor: '#F0F0F0', marginVertical: 15 },
+  subTotalLabel: { fontSize: 18, color: '#111', fontWeight: '500' },
+  subTotalValue: { fontSize: 18, fontWeight: '800', color: '#111' },
+
+  // Place Order Button
+  placeOrderButton: {
+    backgroundColor: '#111',
+    height: 60,
+    borderRadius: 30,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 20,
+    ...Platform.select({
+        ios: { shadowColor: '#000', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.2, shadowRadius: 5 },
+        android: { elevation: 5 },
+    }),
+  },
+  placeOrderText: { color: '#FFF', fontSize: 16, fontWeight: '700', marginRight: 10 },
+  arrowCircle: {
+    width: 26,
+    height: 26,
+    borderRadius: 13,
+    backgroundColor: '#FFF',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 
-  saveCard: {
-    flexDirection: "row",
-    alignItems: "center",
-    margin: 16,
+  // Floating Tab Bar
+  tabBar: {
+    position: 'absolute',
+    bottom: 25,
+    left: 20,
+    right: 20,
+    height: 75,
+    backgroundColor: '#222',
+    borderRadius: 40,
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    alignItems: 'center',
+    paddingHorizontal: 10,
   },
-
-  saveText: {
-    marginLeft: 8,
-    fontSize: 13,
+  tabItem: { alignItems: 'center', justifyContent: 'center' },
+  activeTabCircle: {
+    width: 45,
+    height: 45,
+    borderRadius: 22.5,
+    backgroundColor: '#333',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
-
-  footer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    padding: 16,
-    borderTopWidth: 1,
-    borderColor: "#eee",
-  },
-
-  footerLabel: {
-    fontSize: 13,
-    color: "#666",
-  },
-
-  footerPrice: {
-    fontSize: 18,
-    fontWeight: "700",
-  },
-
-  payButton: {
-    backgroundColor: "#2b2b2b",
-    paddingHorizontal: 26,
-    paddingVertical: 12,
-    borderRadius: 24,
-  },
-
-  payText: {
-    color: "#fff",
-    fontSize: 15,
-    fontWeight: "600",
-  },
+  activeIndicator: { width: 4, height: 4, borderRadius: 2, backgroundColor: '#FFF', marginTop: 4 },
+  shoppingBag: { position: 'relative' },
+  badge: {
+    position: 'absolute',
+    top: -2,
+    right: -2,
+    width: 10,
+    height: 10,
+    borderRadius: 5,
+    backgroundColor: '#EF2A39',
+    borderWidth: 1.5,
+    borderColor: '#222',
+  }
 });

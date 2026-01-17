@@ -4,91 +4,166 @@ import {
   Text,
   StyleSheet,
   TouchableOpacity,
+  SafeAreaView,
+  Dimensions,
+  Platform,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
+
+const { width } = Dimensions.get('window');
 
 export default function SuccessPage() {
   const router = useRouter();
 
   return (
-    <View style={styles.container}>
-      <View style={styles.card}>
-        <View style={styles.iconCircle}>
-          <Ionicons name="checkmark" size={32} color="#fff" />
+    <SafeAreaView style={styles.container}>
+      <View style={styles.content}>
+        {/* Success Icon with layered shadow effect */}
+        <View style={styles.iconOuterRing}>
+          <View style={styles.iconCircle}>
+            <Ionicons name="checkmark" size={40} color="#fff" />
+          </View>
         </View>
 
-        <Text style={styles.title}>Success !</Text>
+        <Text style={styles.title}>Order Successful!</Text>
 
         <Text style={styles.description}>
-          Your payment was successful.{'\n'}
-          A receipt for this purchase has{'\n'}
-          been sent to your email.
+          Your payment was processed successfully. {'\n'}
+          A confirmation and digital receipt have {'\n'}
+          been sent to your registered email.
         </Text>
 
-        <TouchableOpacity
-          style={styles.button}
-          onPress={() => router.push("/")}
-        >
-          <Text style={styles.buttonText}>Go Back</Text>
-        </TouchableOpacity>
+        {/* Info Card for Order ID */}
+        <View style={styles.orderCard}>
+          <Text style={styles.orderLabel}>Order ID</Text>
+          <Text style={styles.orderID}>#RS-8829-2026</Text>
+        </View>
+
+        <View style={styles.buttonContainer}>
+          <TouchableOpacity
+            style={styles.primaryButton}
+            onPress={() => router.push("/" as any)}
+            activeOpacity={0.8}
+          >
+            <Text style={styles.primaryButtonText}>Back to Home</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={styles.secondaryButton}
+            onPress={() => router.push("/" as any)} // Or link to order history
+            activeOpacity={0.6}
+          >
+            <Text style={styles.secondaryButtonText}>View Cart</Text>
+          </TouchableOpacity>
+        </View>
       </View>
-    </View>
+    </SafeAreaView>
   );
 }
-
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#d9d9d9',
+    backgroundColor: '#fff',
+  },
+  content: {
+    flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    paddingHorizontal: 30,
   },
-  card: {
-    width: 280,
-    backgroundColor: '#fff',
-    borderRadius: 16,
-    paddingVertical: 24,
-    paddingHorizontal: 20,
+  iconOuterRing: {
+    width: 120,
+    height: 120,
+    borderRadius: 60,
+    backgroundColor: '#F7F7F7',
+    justifyContent: 'center',
     alignItems: 'center',
-    elevation: 6,
-    shadowColor: '#000',
-    shadowOpacity: 0.15,
-    shadowRadius: 10,
-    shadowOffset: { width: 0, height: 4 },
+    marginBottom: 30,
   },
   iconCircle: {
-    width: 56,
-    height: 56,
-    borderRadius: 28,
-    backgroundColor: '#ef2b2d',
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    backgroundColor: '#111', // High-end black instead of red
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 16,
+    ...Platform.select({
+      ios: {
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 10 },
+        shadowOpacity: 0.3,
+        shadowRadius: 15,
+      },
+      android: { elevation: 8 },
+    }),
   },
   title: {
-    fontSize: 20,
-    fontWeight: '700',
-    color: '#ef2b2d',
-    marginBottom: 10,
+    fontSize: 28,
+    fontWeight: '800',
+    color: '#111',
+    letterSpacing: -0.5,
+    marginBottom: 16,
   },
   description: {
     textAlign: 'center',
-    fontSize: 14,
+    fontSize: 15,
     color: '#777',
-    lineHeight: 20,
-    marginBottom: 20,
+    lineHeight: 24,
+    marginBottom: 30,
   },
-  button: {
-    backgroundColor: '#ef2b2d',
-    paddingVertical: 10,
-    paddingHorizontal: 28,
-    borderRadius: 10,
+  orderCard: {
+    width: '100%',
+    backgroundColor: '#FAFAFA',
+    borderRadius: 20,
+    padding: 20,
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#F0F0F0',
+    marginBottom: 40,
   },
-  buttonText: {
+  orderLabel: {
+    fontSize: 12,
+    color: '#999',
+    textTransform: 'uppercase',
+    letterSpacing: 1,
+    marginBottom: 4,
+  },
+  orderID: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#111',
+  },
+  buttonContainer: {
+    width: '100%',
+    gap: 12,
+  },
+  primaryButton: {
+    backgroundColor: '#111',
+    height: 60,
+    borderRadius: 30,
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: '100%',
+  },
+  primaryButtonText: {
     color: '#fff',
+    fontWeight: '700',
+    fontSize: 16,
+  },
+  secondaryButton: {
+    height: 60,
+    borderRadius: 30,
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: '100%',
+    borderWidth: 1,
+    borderColor: '#EEE',
+  },
+  secondaryButtonText: {
+    color: '#666',
     fontWeight: '600',
-    fontSize: 14,
+    fontSize: 16,
   },
 });

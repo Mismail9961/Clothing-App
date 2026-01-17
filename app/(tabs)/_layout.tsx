@@ -1,11 +1,6 @@
 import { Tabs } from "expo-router";
-import Entypo from "@expo/vector-icons/Entypo";
-import AntDesign from "@expo/vector-icons/AntDesign";
-import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { View, StyleSheet } from "react-native";
-import Ionicons from '@expo/vector-icons/Ionicons';
-
-
+import { Ionicons, MaterialCommunityIcons, FontAwesome } from '@expo/vector-icons';
 
 export default function TabsLayout() {
   return (
@@ -13,33 +8,22 @@ export default function TabsLayout() {
       screenOptions={{
         headerShown: false,
         tabBarShowLabel: false,
-        tabBarStyle: {
-          backgroundColor: "#EF2A39", // soft beige
-          height: 65,
-          borderTopWidth: 0,
-          borderTopLeftRadius: 25,
-          borderTopRightRadius: 25,
-          position: "absolute",
-          bottom: 0,
-          left: 0,
-          right: 0,
-          elevation: 10,
-          shadowColor: "#000",
-          shadowOpacity: 0.1,
-          shadowRadius: 8,
-        },
+        tabBarStyle: styles.tabBar,
       }}
     >
       <Tabs.Screen
         name="index"
         options={{
           tabBarIcon: ({ focused }) => (
-            <View style={[styles.iconContainer, focused && styles.active]}>
-              <Entypo
-                name="home"
-                size={22}
-                color={focused ? "#EF2A39" : "#fff"}
-              />
+            <View style={styles.container}>
+              <View style={[styles.iconWrapper, focused && styles.activeCircle]}>
+                <MaterialCommunityIcons
+                  name="home-variant"
+                  size={26}
+                  color={focused ? "#FFFFFF" : "#8E8E93"}
+                />
+              </View>
+              {focused && <View style={styles.activeDot} />}
             </View>
           ),
         }}
@@ -49,12 +33,16 @@ export default function TabsLayout() {
         name="shop"
         options={{
           tabBarIcon: ({ focused }) => (
-            <View style={[styles.iconContainer, focused && styles.active]}>
-              <FontAwesome
-                name="shopping-cart"
-                size={22}
-                color={focused ? "#EF2A39" : "#fff"}
-              />
+            <View style={styles.container}>
+              <View style={[styles.iconWrapper, focused && styles.activeCircle]}>
+                <Ionicons
+                  name="bag-outline"
+                  size={24}
+                  color={focused ? "#FFFFFF" : "#8E8E93"}
+                />
+                <View style={styles.badge} />
+              </View>
+              {focused && <View style={styles.activeDot} />}
             </View>
           ),
         }}
@@ -64,26 +52,33 @@ export default function TabsLayout() {
         name="chat"
         options={{
           tabBarIcon: ({ focused }) => (
-            <View style={[styles.iconContainer, focused && styles.active]}>
-              <Entypo
-                name="chat"
-                size={22}
-                color={focused ? "#EF2A39" : "#fff"}
-              />
+            <View style={styles.container}>
+              <View style={[styles.iconWrapper, focused && styles.activeCircle]}>
+                <Ionicons
+                  name="heart-outline"
+                  size={26}
+                  color={focused ? "#FFFFFF" : "#8E8E93"}
+                />
+              </View>
+              {focused && <View style={styles.activeDot} />}
             </View>
           ),
         }}
       />
+
       <Tabs.Screen
         name="profile"
         options={{
           tabBarIcon: ({ focused }) => (
-            <View style={[styles.iconContainer, focused && styles.active]}>
-              <AntDesign
-                name="user"
-                size={22}
-                color={focused ? "#EF2A39" : "#fff"}
-              />
+            <View style={styles.container}>
+              <View style={[styles.iconWrapper, focused && styles.activeCircle]}>
+                <FontAwesome
+                  name="user-o"
+                  size={22}
+                  color={focused ? "#FFFFFF" : "#8E8E93"}
+                />
+              </View>
+              {focused && <View style={styles.activeDot} />}
             </View>
           ),
         }}
@@ -93,15 +88,49 @@ export default function TabsLayout() {
 }
 
 const styles = StyleSheet.create({
-  iconContainer: {
+  tabBar: {
+    backgroundColor: "#1A1A1A",
+    height: 75, // Reduced from 85 to match the smaller container
+    borderTopWidth: 0,
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    right: 0,
+    paddingBottom: 15,
+  },
+  container: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    height: 30, // Decreased as requested
+    top: 15,     // Adjusted to center the smaller container vertically
+  },
+  iconWrapper: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
     justifyContent: "center",
     alignItems: "center",
-    width: 45,
-    height: 45,
-    borderRadius: 50,
-    marginTop:29
+    position: 'relative',
   },
-  active: {
-    backgroundColor: "#F3F0E3", // light circle behind active icon
+  activeCircle: {
+    backgroundColor: "rgba(255, 255, 255, 0.1)",
+  },
+  activeDot: {
+    width: 4,
+    height: 4,
+    borderRadius: 2,
+    backgroundColor: '#FFFFFF',
+    marginTop: 4,
+  },
+  badge: {
+    position: 'absolute',
+    top: 8,
+    right: 8,
+    width: 9,
+    height: 9,
+    borderRadius: 4.5,
+    backgroundColor: '#FF4B55',
+    borderWidth: 1.5,
+    borderColor: '#1A1A1A',
   },
 });
