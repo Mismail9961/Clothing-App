@@ -48,23 +48,7 @@ export default function TabsLayout() {
         }}
       />
 
-      <Tabs.Screen
-        name="chat"
-        options={{
-          tabBarIcon: ({ focused }) => (
-            <View style={styles.container}>
-              <View style={[styles.iconWrapper, focused && styles.activeCircle]}>
-                <Ionicons
-                  name="heart-outline"
-                  size={26}
-                  color={focused ? "#FFFFFF" : "#8E8E93"}
-                />
-              </View>
-              {focused && <View style={styles.activeDot} />}
-            </View>
-          ),
-        }}
-      />
+
 
       <Tabs.Screen
         name="profile"
